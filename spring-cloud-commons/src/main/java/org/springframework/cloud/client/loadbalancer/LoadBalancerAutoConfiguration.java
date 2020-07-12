@@ -48,6 +48,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties(LoadBalancerRetryProperties.class)
 public class LoadBalancerAutoConfiguration {
 
+	// 这些resttemplate都是我们在项目中自己定义的bean，都会被放入到这里
 	@LoadBalanced
 	@Autowired(required = false)
 	private List<RestTemplate> restTemplates = Collections.emptyList();
@@ -60,6 +61,7 @@ public class LoadBalancerAutoConfiguration {
 			final ObjectProvider<List<RestTemplateCustomizer>> restTemplateCustomizers) {
 		return () -> restTemplateCustomizers.ifAvailable(customizers -> {
 			for (RestTemplate restTemplate : LoadBalancerAutoConfiguration.this.restTemplates) {
+				// 每个resttemplate都有对应的customizer做定制化
 				for (RestTemplateCustomizer customizer : customizers) {
 					customizer.customize(restTemplate);
 				}
@@ -85,6 +87,7 @@ public class LoadBalancerAutoConfiguration {
 			return new LoadBalancerInterceptor(loadBalancerClient, requestFactory);
 		}
 
+		// 对RestTemplate做定制化的，即给restTemplate加上普通的loadBalancerInterceptor
 		@Bean
 		@ConditionalOnMissingBean
 		public RestTemplateCustomizer restTemplateCustomizer(
@@ -133,6 +136,7 @@ public class LoadBalancerAutoConfiguration {
 					requestFactory, loadBalancedRetryFactory);
 		}
 
+		// 对RestTemplate做定制化的，即给restTemplate加上可重试的 RetryLoadBalancerInterceptor
 		@Bean
 		@ConditionalOnMissingBean
 		public RestTemplateCustomizer restTemplateCustomizer(
