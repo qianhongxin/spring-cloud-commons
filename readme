@@ -1,0 +1,1 @@
+1。 该项目是spring cloud的公共依赖模块。所以spring cloud提出到了一个common项目中。sca，scn都可以依赖使用
